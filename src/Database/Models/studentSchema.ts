@@ -1,4 +1,5 @@
-import { model, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { StudentDocument } from "../../Types/studentInterface";
 
 const studentSchema = new Schema(
   {
@@ -25,5 +26,5 @@ const studentSchema = new Schema(
   }
 );
 
-const student = model("student", studentSchema, "student");
-export default student;
+const StudentModel = mongoose.model<StudentDocument>("student", studentSchema);
+export default StudentModel;

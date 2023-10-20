@@ -1,4 +1,5 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
+import { AdminDocument } from "../../Types/adminInterface";
 
 const adminSchema = new Schema(
   {
@@ -21,5 +22,5 @@ const adminSchema = new Schema(
   }
 );
 
-const admin = model("admin", adminSchema, "admin");
-export default admin;
+const AdminModel = mongoose.model<AdminDocument>("admin", adminSchema);
+export default AdminModel;
