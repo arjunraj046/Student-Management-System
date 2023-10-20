@@ -1,5 +1,8 @@
 # Student-Management-System
 
+visit server : 
+
+API Documentation on Postman : 
 
 config.env 
 
