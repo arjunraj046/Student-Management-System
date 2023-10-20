@@ -20,13 +20,28 @@ const taskSchemas = new Schema(
       required: true,
     },
     status: {
-      type: String,
-      enum: ["pending", "overdue", "completed"],
-      default: "pending",
+      pending: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "students", 
+        },
+      ],
+      completed: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "students", 
+        },
+      ],
+      overdue: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "students", 
+        },
+      ],
     },
     assignedBy: {
       type: Schema.Types.ObjectId,
-      ref: "Admin",
+      ref: "admins",
       required: true,
     },
   },

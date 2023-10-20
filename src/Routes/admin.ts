@@ -7,9 +7,8 @@ const adminRoute = () => {
 
   router.post("/register", AdminController.adminRegister);
   router.post("/login", AdminController.adminLogin);
-  router.post("/assign-task", AdminController.assignTask);
-
+  router.post("/addstudent", AdminController.adminAddStudents);
+  router.post("/assigntask", AdminController.assignTask);
   return router;
 };
-
 export default adminRoute;

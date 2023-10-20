@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import { Document } from "mongoose";
 
 export interface AdminRegisterInterface {
   keys(obj: any): unknown;
@@ -18,9 +18,12 @@ export interface AdminLoginInterface {
   password: string;
 }
 
-// export interface AdminDataInterface {
-//   _id: mongoose.Types.ObjectId;
-//   name?: string;
-//   email: string;
-//   password: string;
-// }
+export interface AdminData {
+  _id: string;
+  name: string;
+  email: string;
+  password: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  __v?: number;
+}

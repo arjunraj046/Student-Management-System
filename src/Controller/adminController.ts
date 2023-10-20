@@ -1,37 +1,58 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { adminLoginUseCase, adminRegisterUseCase } from "../UseCase/adminCase";
-import { HttpStatus } from "../Types/httpStatus";
-import AppError from "../Utils/appError";
+import { adminAddStudentUseCase, adminAssignTaskUseCase, adminLoginUseCase, adminRegisterUseCase } from "../UseCase/adminCase";
+import { AdminLoginInterface, AdminRegisterInterface } from "../Types/adminInterface";
+import { StudentRegisterInterface } from "../Types/studentInterface";
+import { TaskData } from "../Types/taskInterface";
 
 const adminController = () => {
   const adminRegister = asyncHandler(async (req: Request, res: Response) => {
-    const data: any | null = req.body;
+    const data: AdminRegisterInterface | null = req.body;
     const result: any = await adminRegisterUseCase(data);
     res.json({
       status: "success",
-      result,
+      response: result,
     });
   });
 
   const adminLogin = asyncHandler(async (req: Request, res: Response) => {
-    const data: any | null = req.body;
-    const result: any = await adminLoginUseCase(data);
+    const data: AdminLoginInterface | null = req.body;
+    const result = await adminLoginUseCase(data);
+    if (result) {
+      const { adminData, token } = result;
+      res.json({
+        status: "success",
+        adminData: adminData,
+        token: token,
+      });
+    } else {
+      res.status(400).json({
+        status: "error",
+        message: "Admin not found or login failed.",
+      });
+    }
+  });
+
+  const adminAddStudents = asyncHandler(async (req: Request, res: Response) => {
+    const studentData: StudentRegisterInterface | null = req.body;
+    const studentDocument: any = await adminAddStudentUseCase(studentData);
     res.json({
       status: "success",
-      result,
+      response: studentDocument,
     });
   });
 
   const assignTask = asyncHandler(async (req: Request, res: Response) => {
-    let response;
+    let taskData: TaskData = req.body;
+    console.log(taskData);
+    let taskDocument = await adminAssignTaskUseCase(taskData);
     res.json({
       status: "success",
-      response,
+      response: taskDocument,
     });
   });
 
-  return { adminRegister, adminLogin, assignTask };
+  return { adminRegister, adminLogin, adminAddStudents, assignTask };
 };
 
 export default adminController;
