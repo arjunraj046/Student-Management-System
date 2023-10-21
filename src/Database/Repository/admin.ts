@@ -6,6 +6,8 @@ import AppError from "../../Utils/appError";
 import AdminModel from "../Models/adminSchema";
 import StudentModel from "../Models/studentSchema";
 import { MongoError } from "mongodb";
+import { TaskDocument } from "./taskInterface";
+import TaskModel from "../Models/taskSchema";
 
 export const createAdminDB = async (data: AdminRegisterInterface): Promise<AdminDocument> => {
   try {
@@ -65,36 +67,44 @@ export const addStudentDB = async (data: StudentRegisterInterface) => {
   }
 };
 
-export const getStudentsIDs = (department: string) => {
+export const getStudentsIDs = async (department: string) => {
   try {
-    let studentsarray = StudentModel.aggregate( [
+    const studentData = await StudentModel.aggregate([
       {
         $match: {
-          department: 'computer', // Replace with your desired department
+          department: department,
         },
       },
       {
         $group: {
           _id: null,
           studentIds: {
-            $push: '$_id',
+            $push: "$_id",
           },
         },
       },
-      {
-        $project: {
-          _id: 0,
-          studentIds: 1,
-        },
-      },
-    ]);
+    ]).exec();
 
-    return studentsarray;
+    if (studentData.length > 0) {
+      const studentArray = studentData[0]?.studentIds;
+      console.log("studentData", studentData);
+      console.log("studentArray", studentArray);
+      return studentArray;
+    } else {
+      console.log("No students found for the given department.");
+      return [];
+    }
   } catch (error) {
-    throw new AppError("An error occurred", HttpStatus.CONFLICT);
+    console.error("Error fetching student data:", error);
+    throw error;
   }
 };
 
-export const assignTaskDB = () => {
-  return 1;
+export const assignTaskDB = async (Task: TaskDocument) => {
+  try {
+    let TaskDoc: any = await TaskModel.create(Task);
+    return TaskDoc;
+  } catch (error) {
+    throw error;
+  }
 };

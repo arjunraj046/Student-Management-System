@@ -1,4 +1,5 @@
-import { createAdminDB, adminLoginDB, addStudentDB, getStudentsIDs } from "../Database/Repository/admin";
+import { Types } from "mongoose";
+import { createAdminDB, adminLoginDB, addStudentDB, getStudentsIDs, assignTaskDB } from "../Database/Repository/admin";
 import { passwordHashing } from "../Services/bcrypt";
 import { generateToken } from "../Services/jwt";
 import { AdminData, AdminLoginInterface, AdminRegisterInterface } from "../Types/adminInterface";
@@ -6,6 +7,7 @@ import { HttpStatus } from "../Types/httpStatus";
 import { StudentRegisterInterface } from "../Types/studentInterface";
 import { TaskData, TaskDocument } from "../Types/taskInterface";
 import AppError from "../Utils/appError";
+import TaskModel from "../Database/Models/taskSchema";
 
 // Admin Register
 export const adminRegisterUseCase = async (data: AdminRegisterInterface | null) => {
@@ -74,24 +76,27 @@ export const adminAssignTaskUseCase = async (data: TaskData) => {
   if (!data || Object.keys(data).length === 0) {
     throw new AppError("No Content", HttpStatus.NO_CONTENT);
   }
-  const arrayOfStudents = await getStudentsIDs(data.department);
-  console.log(arrayOfStudents);
-  
-  const Task: TaskDocument = {
-    assignedBy: data.assignedBy,
-    title: data.title,
-    publishDate: new Date(),
-    description:data.description,
-    department: data.department,
-    dueTime: data.dueTime,
-    status: {
-      pending: arrayOfStudents,
-      completed: [],
-      overdue: [],
-    },
-  };
-
-  console.log("Task to upload",Task);
+  try {
+    const arrayOfStudents: Types.ObjectId[] = await getStudentsIDs(data.department);
+    const taskToAssign = new TaskModel({
+      assignedBy: data.assignedBy,
+      title: data.title,
+      publishDate: new Date(),
+      description: data.description,
+      department: data.department,
+      dueTime: data.dueTime,
+      status: {
+        pending: arrayOfStudents,
+        completed: [],
+        overdue: [],
+      },
+    });
+    console.log("Task to upload", taskToAssign);
+    let assignedTask = await assignTaskDB(taskToAssign);
+    return assignedTask;
+  } catch (error) {
+    throw new AppError("An error occurred", HttpStatus.CONFLICT);
+  }
 };
 
 // Admin view task details

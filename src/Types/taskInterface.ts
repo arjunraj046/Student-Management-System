@@ -1,16 +1,16 @@
-import { Types } from "mongoose";
+import { Document, Types } from "mongoose";
 
-export interface TaskDocument {
+export interface TaskDocument extends Document {
   title: string;
   description?: string;
   assignedBy: Types.ObjectId;
   publishDate: Date;
-  department:string;
+  department: string;
   dueTime: Date;
   status: {
-    pending: Array<string>;
-    completed: Array<string>;
-    overdue: Array<string>;
+    pending: Types.ObjectId[];
+    completed: Types.ObjectId[];
+    overdue: Types.ObjectId[];
   };
 }
 
@@ -18,6 +18,6 @@ export interface TaskData {
   assignedBy: Types.ObjectId;
   title: string;
   description?: string;
-  department:string;
+  department: string;
   dueTime: Date;
 }
