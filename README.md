@@ -2,7 +2,7 @@
 
 visit server : 
 
-API Documentation on Postman : 
+API Documentation on Postman : https://documenter.getpostman.com/view/23527936/2s9YRB3sRE
 
 config.env 
 
